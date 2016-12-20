@@ -102,7 +102,7 @@ class TodosContainer extends Component {
   // ...
 }
 ```
-The `todos/get/failed` action object must contain a top-level key `error` or `err` whose value is an error description(An `Error()` instance or a string or whatever you want).
+The `todos/get/failed` action object should contain a top-level key `error` or `err` whose value is an error description(An `Error()` instance or a string or whatever you want).
 ```javascript
 getReduxPromise().then(() => {
   // ...
