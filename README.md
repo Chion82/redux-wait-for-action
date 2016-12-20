@@ -78,7 +78,7 @@ function handleRequest(req, res, next) {
           { <RouterContext {...renderProps}/> }
         </Provider>
       );
-      res.send(200, renderFullPage(html, initStateString));
+      res.status(200).send(renderFullPage(html, initStateString));
     });
   });
 }
