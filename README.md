@@ -89,7 +89,7 @@ Advanced Usage
 ## Error handling
 Make sure both `WAIT_FOR_ACTION` and `ERROR_ACTION` symbols are specified in your action:
 ```javascript
-import { WAIT_FOR_ACTION } from 'redux-wait-for-action';
+import { WAIT_FOR_ACTION, ERROR_ACTION } from 'redux-wait-for-action';
 
 class TodosContainer extends Component {
   static fetchData(dispatch) {
