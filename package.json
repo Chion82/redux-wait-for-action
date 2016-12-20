@@ -1,6 +1,6 @@
 {
   "name": "redux-wait-for-action",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Redux middleware to make store.dispatch() return a promise and wait for another action",
   "main": "lib/index.js",
   "scripts": {
