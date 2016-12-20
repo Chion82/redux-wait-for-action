@@ -18,6 +18,10 @@
     "eslint": "^3.12.2",
     "mocha": "^3.2.0"
   },
+  "repository" : {
+    "type" : "git",
+    "url" : "https://github.com/Chion82/redux-wait-for-action"
+  },
   "keywords": [
     "redux",
     "redux-saga",
