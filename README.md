@@ -3,7 +3,7 @@ Redux Wait for Action
 [![Build Status](https://travis-ci.org/Chion82/redux-wait-for-action.svg?branch=master)](https://travis-ci.org/Chion82/redux-wait-for-action)
 [![npm version](https://badge.fury.io/js/redux-wait-for-action.svg)](https://badge.fury.io/js/redux-wait-for-action)
 
-A Redux middleware to make `store.dispatch()` return a promise which will be resolved when another specified action is dispatched, which is useful for universal(isomorphic) React Web Apps with redux and server-side rendering.
+Redux middleware to make `store.dispatch()` return a promise which will be resolved when another specified action is dispatched, which is useful for universal(isomorphic) React Web Apps with redux and server-side rendering.
 
 ```
 npm install --save redux-wait-for-action
@@ -18,15 +18,20 @@ Basic Concept
 
 Usage with react-router and redux-saga
 --------------------------------------
-Create a Redux store:
+`configureStore()` function where a Redux store is created:
 ```javascript
 import createReduxWaitForMiddleware from 'redux-wait-for-action';
-const sagaMiddleware = createSagaMiddleware();
-let enhancer = compose(
-  applyMiddleware(sagaMiddleware),
-  applyMiddleware(createReduxWaitForMiddleware()),
-);
-const store = createStore(rootReducer, initialState, enhancer);
+
+function configureStore(initialState) {
+  const sagaMiddleware = createSagaMiddleware();
+  let enhancer = compose(
+    applyMiddleware(sagaMiddleware),
+    applyMiddleware(createReduxWaitForMiddleware()),
+  );
+  const store = createStore(rootReducer, initialState, enhancer);
+
+  // ...
+}
 ```
 Assume we have a saga effect like this:
 ```javascript
@@ -53,11 +58,12 @@ class TodosContainer extends Component {
   // ...
 }
 ```
-Here in our action we specify `WAIT_FOR_ACTION` as `'profile/get/success'`, which tells our promise to wait for another action `'profile/get/success'`. `WAIT_FOR_ACTION` is a ES6 `Symbol` instance rather than a string or something, so feel free using it and it won't contaminate your action.
+Here in our action we specify `WAIT_FOR_ACTION` as `'profile/get/success'`, which tells our promise to wait for another action `'profile/get/success'`. `WAIT_FOR_ACTION` is a ES6 `Symbol` instance rather than a string, so feel free using it and it won't contaminate your action.
 
-Next, on server side rendering:
+Next, for server side rendering:
 ```javascript
 //handler for Express.js
+app.use('*', handleRequest);
 function handleRequest(req, res, next) {
   //...
   match({history, routes, location: req.url}, (error, redirectLocation, renderProps) => {
@@ -87,7 +93,25 @@ function handleRequest(req, res, next) {
 Advanced Usage
 --------------
 ## Error handling
-Make sure both `WAIT_FOR_ACTION` and `ERROR_ACTION` symbols are specified in your action:
+Use `try-catch` clause in sagas effects. The `todos/get/failed` action object should contain a top-level key `error` or `err` whose value is an error descriptor(An `Error()` instance or a string).
+```javascript
+function* getTodosSaga() {
+  yield take('todos/get');
+  try {
+    const payload = yield call(APIService.getTodos);
+    yield put({
+      type: 'todos/get/success',
+      payload
+    });
+  } catch (error) {
+    yield put({
+      type: 'todos/get/failed',
+      error
+    });
+  }
+}
+```
+Make sure both `WAIT_FOR_ACTION` and `ERROR_ACTION` symbols are specified in your `todos/get` action:
 ```javascript
 import { WAIT_FOR_ACTION, ERROR_ACTION } from 'redux-wait-for-action';
 
@@ -102,12 +126,12 @@ class TodosContainer extends Component {
   // ...
 }
 ```
-The `todos/get/failed` action object should contain a top-level key `error` or `err` whose value is an error description(An `Error()` instance or a string or whatever you want).
+Server side rendering logic:
 ```javascript
 getReduxPromise().then(() => {
   // ...
   res.status(200).send(renderFullPage(html, initStateString));
-}).catch(error => {
-  res.status(500).send(error.message); //action.error is passed to here
+}).catch((error) => { //action.error is passed to here
+  res.status(500).send(error.message);
 });
 ```
