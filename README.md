@@ -11,7 +11,7 @@ npm install --save redux-wait-for-action
 
 Basic Concept
 -------------
-* For each React containers, we define a static function `fetchData()` where we return a `store.dispatch()` call followed by automatic execution of side effects.
+* For each React container, we define a static function `fetchData()` where we return a `store.dispatch()` call followed by automatic execution of side effects.
 * Use those `fetchData()`s to initialize page data on **both client and server side**.
 * On server side, we put the rendering logic in `fetchData().then(() => { /* rendering logic here! */ })`, where side effects are completed and an action with finishing flag is dispatched.
 * If you are using [redux-thunk](https://github.com/gaearon/redux-thunk), `store.dispatch()` already returns a promise and you probably don't need this middleware. However, side effects like [redux-saga](https://github.com/yelouafi/redux-saga) running separately from primitive Redux flow don't explicitly notify us when a specific async fetch is finished, in which case redux-wait-for-action does the trick and makes those async tasks subscribable.
