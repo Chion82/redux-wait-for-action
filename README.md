@@ -92,7 +92,8 @@ function handleRequest(req, res, next) {
 
 Advanced Usage
 --------------
-## Error handling
+### Error Handling
+
 Use `try-catch` clause in sagas effects. The `todos/get/failed` action object should contain a top-level key `error` or `err` whose value is an error descriptor(An `Error()` instance or a string).
 ```javascript
 function* getTodosSaga() {
