@@ -9,6 +9,10 @@ Redux middleware to make `store.dispatch()` return a promise which will be resol
 npm install --save redux-wait-for-action
 ```
 
+Quick Start
+-----------
+[Minimal starter kit for universal apps with redux and redux-saga](https://github.com/Chion82/react-redux-universal-minimal) 
+
 Basic Concept
 -------------
 * For each React container, we define a static function `fetchData()` where we return a `store.dispatch()` call followed by automatic execution of side effects.
