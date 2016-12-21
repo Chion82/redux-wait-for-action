@@ -4,24 +4,41 @@ const ERROR_ACTION = Symbol('ERROR_ACTION');
 export { WAIT_FOR_ACTION, ERROR_ACTION };
 
 export default function() {
-  const resolveActionQueue = {};
-  const rejectActionQueue = {};
+  const resolveCallbackQueue = {};
+  const rejectCallbackQueue = {};
+  const resolveRejectMap = {};
 
   //eslint-disable-next-line
   return store => next => action => {
 
-    if (resolveActionQueue[action.type]) {
-      resolveActionQueue[action.type].forEach(resolveFunction =>
-        resolveFunction(action.payload || action.data || {})
-      );
-      resolveActionQueue[action.type] = [];
+    if (!action.type) {
+      return next(action);
     }
 
-    if (rejectActionQueue[action.type]) {
-      rejectActionQueue[action.type].forEach(rejectFunction =>
+    if (resolveCallbackQueue[action.type]) {
+      resolveCallbackQueue[action.type].forEach(resolveFunction =>
+        resolveFunction(action.payload || action.data || {})
+      );
+      resolveCallbackQueue[action.type] = [];
+
+      const mappedErrorAction = resolveRejectMap[action.type];
+      if (mappedErrorAction) {
+        rejectCallbackQueue[mappedErrorAction] = [];
+      }
+    }
+
+    if (rejectCallbackQueue[action.type]) {
+      rejectCallbackQueue[action.type].forEach(rejectFunction =>
         rejectFunction(action.error || action.err || new Error('action.error not specified.'))
       );
-      rejectActionQueue[action.type] = [];
+      rejectCallbackQueue[action.type] = [];
+
+      for (let resolveAction in resolveRejectMap) {
+        if (resolveRejectMap[resolveAction] === action.type) {
+          let mappedResolveAction = resolveAction;
+          resolveCallbackQueue[mappedResolveAction] = [];
+        }
+      }
     }
 
     if (!action[WAIT_FOR_ACTION]) {
@@ -31,19 +48,21 @@ export default function() {
     const resolveAction = action[WAIT_FOR_ACTION];
     const errorAction = action[ERROR_ACTION];
 
-    if (!resolveActionQueue[resolveAction]) {
-      resolveActionQueue[resolveAction] = [];
+    resolveRejectMap[resolveAction] = errorAction;
+
+    if (!resolveCallbackQueue[resolveAction]) {
+      resolveCallbackQueue[resolveAction] = [];
     }
 
-    if (errorAction && (!rejectActionQueue[errorAction])) {
-      rejectActionQueue[errorAction] = [];
+    if (errorAction && (!rejectCallbackQueue[errorAction])) {
+      rejectCallbackQueue[errorAction] = [];
     }
 
     const promise = new Promise((resolve, reject) => {
-      resolveActionQueue[resolveAction].push(resolve);
+      resolveCallbackQueue[resolveAction].push(resolve);
 
       if (errorAction) {
-        rejectActionQueue[errorAction].push(reject);
+        rejectCallbackQueue[errorAction].push(reject);
       }
     });
 
