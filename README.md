@@ -23,7 +23,7 @@ Basic Concept
 
 Usage with react-router and redux-saga
 --------------------------------------
-`configureStore()` function where a Redux store is created:
+`configureStore()` function where a Redux store is created on **both client and server side**:
 ```javascript
 import createReduxWaitForMiddleware from 'redux-wait-for-action';
 
@@ -38,18 +38,20 @@ function configureStore(initialState) {
   // ...
 }
 ```
-Assume we have a saga effect like this:
+Assume we have saga effects like this:
 ```javascript
 function* getTodosSaga() {
-  yield take('todos/get');
   const payload = yield call(APIService.getTodos);
   yield put({
     type: 'todos/get/success',
     payload
   });
 }
+function* rootSaga() {
+  yield takeLatest('todos/get', getTodosSaga);
+}
 ```
-Define `fetchData()` for our container:
+Define a `fetchData()` for each of our containers:
 ```javascript
 import { WAIT_FOR_ACTION } from 'redux-wait-for-action';
 
@@ -60,12 +62,16 @@ class TodosContainer extends Component {
       [ WAIT_FOR_ACTION ]: 'todos/get/success',
     });
   }
+  componentDidMount() {
+    // Populate page data on client side
+    TodosContainer.fetchData(this.props.dispatch);
+  }
   // ...
 }
 ```
 Here in our action we specify `WAIT_FOR_ACTION` as `'profile/get/success'`, which tells our promise to wait for another action `'profile/get/success'`. `WAIT_FOR_ACTION` is a ES6 `Symbol` instance rather than a string, so feel free using it and it won't contaminate your action.
 
-Next, for server side rendering:
+Next for server side rendering, we reuse those `fetchData()`s to get the data we need:
 ```javascript
 //handler for Express.js
 app.use('*', handleRequest);
@@ -94,6 +100,7 @@ function handleRequest(req, res, next) {
   });
 }
 ```
+
 
 Advanced Usage
 --------------
