@@ -66,6 +66,8 @@ export default function() {
       }
     });
 
+    next(action);
+
     return promise;
 
   };
