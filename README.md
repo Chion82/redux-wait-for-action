@@ -3,7 +3,7 @@ Redux Wait for Action
 [![Build Status](https://travis-ci.org/Chion82/redux-wait-for-action.svg?branch=master)](https://travis-ci.org/Chion82/redux-wait-for-action)
 [![npm version](https://badge.fury.io/js/redux-wait-for-action.svg)](https://badge.fury.io/js/redux-wait-for-action)
 
-Redux middleware to make `store.dispatch()` return a promise which will be resolved when another specified action is dispatched, which is useful for universal(isomorphic) React Web Apps with redux and server-side rendering.
+Redux middleware to make `store.dispatch()` return a promise which will be fulfilled when another specified action is dispatched, which is useful for universal(isomorphic) React Web Apps with redux and server-side rendering.
 
 ```
 npm install --save redux-wait-for-action
