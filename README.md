@@ -13,8 +13,31 @@ Quick Start
 -----------
 [Minimal starter kit for universal apps with redux and redux-saga](https://github.com/Chion82/react-redux-universal-minimal)
 
-Basic Concept
--------------
+Basic Usage
+-----------
+To fire `todos/get` action and subscribe for `todos/get/success` action:
+```javascript
+import { WAIT_FOR_ACTION, ERROR_ACTION }
+store.dispatch({
+  type: 'todos/get',
+  [ WAIT_FOR_ACTION ]: 'todos/get/success', // Specify which action we are waiting for
+  [ ERROR_ACTION ]: 'todos/get/failed', // Optional
+}).then( payload => console.log('Todos got!') )
+.catch( error => console.error('Failed!' + error.message) );
+```
+Alternatively, use conditional functions as `WAIT_FOR_ACTION`, which is useful when firing multiple actions with same `action.type` in parallel:
+```javascript
+store.dispatch({
+  type: 'profile/get',
+  [ WAIT_FOR_ACTION ]: action => action.type === 'profile/get/success' && action.id === 1,
+  // Only subscribe for profile/get/success action whose profile id equals 1
+  [ ERROR_ACTION ]: action => action.type === 'profile/get/failed' && action.id === 1,
+}).then( payload => console.log('ID #1 Profile got!') )
+.catch( error => console.error('Failed!' + error.message) );
+```
+
+For Isomorphic Apps
+-------------------
 * For each React container, we define a static function `fetchData()` where we return a `store.dispatch()` call followed by automatic execution of side effects. We should call this `store.dispatch()` with an action that also contains information about which action we are waiting for.
 * Use those `fetchData()`s to populate page data on **both client and server side**.
 * On server side, we put the rendering logic in `fetchData().then(() => { /* rendering logic here! */ })`, where side effects are completed and an action with finishing flag is dispatched.

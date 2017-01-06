@@ -42,6 +42,8 @@ export default function() {
       } else {
         newPendingActionInfo.isErrorAction = action => action.type === errorAction;
       }
+    } else {
+      newPendingActionInfo.isErrorAction = () => false;
     }
 
     const promise = new Promise((resolve, reject) => {
