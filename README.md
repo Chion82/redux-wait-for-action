@@ -17,7 +17,7 @@ Basic Usage
 -----------
 To fire `todos/get` action and subscribe for `todos/get/success` action:
 ```javascript
-import { WAIT_FOR_ACTION, ERROR_ACTION }
+import { WAIT_FOR_ACTION, ERROR_ACTION } from 'redux-wait-for-action';
 store.dispatch({
   type: 'todos/get',
   [ WAIT_FOR_ACTION ]: 'todos/get/success', // Specify which action we are waiting for
