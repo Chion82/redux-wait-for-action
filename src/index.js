@@ -5,12 +5,14 @@ export { WAIT_FOR_ACTION, ERROR_ACTION };
 
 export default function() {
   const pendingActionList = [];
+  const promisesList = [];
+  const getPromisesList = () => promisesList;
 
   //eslint-disable-next-line
-  return store => next => action => {
+  const middleware = store => next => action => {
 
     for (let i = pendingActionList.length - 1; i >= 0; i--) {
-      let pendingActionInfo = pendingActionList[i];
+      const pendingActionInfo = pendingActionList[i];
       if (pendingActionInfo.isSuccessAction(action)) {
         pendingActionInfo.resolveCallback(action.payload || action.data || {});
       } else if (pendingActionInfo.isErrorAction(action)) {
@@ -52,10 +54,13 @@ export default function() {
     });
 
     pendingActionList.push(newPendingActionInfo);
+    promisesList.push(promise);
 
     next(action);
 
     return promise;
 
   };
+
+  return Object.assign(middleware, { getPromisesList });
 }
