@@ -171,3 +171,21 @@ getReduxPromise().then(() => {
   res.status(500).send(error.message);
 });
 ```
+
+### Overriding the Default Promise Arguments
+
+By default the `payload` or `data` field on the `WAIT_FOR_ACTION` action is provided to the promise when it is resolved, or rejected with the `error` or `err` field.
+
+There are two additional symbols, `CALLBACK_ARGUMENT` and `CALLBACK_ERROR_ARGUMENT`, which can be used to override this behavior. If functions are stored on the action using these symbols, they will be invoked and passed the entire action. The result returned from either function is used to resolve or reject the promise based on which symbol was used.
+
+```javascript
+import { WAIT_FOR_ACTION, ERROR_ACTION, CALLBACK_ARGUMENT, CALLBACK_ERROR_ARGUMENT} from 'redux-wait-for-action';
+store.dispatch({
+  type: 'todos/get',
+  [ WAIT_FOR_ACTION ]: 'todos/get/success',
+  [ ERROR_ACTION ]: 'todos/get/failed',
+  [ CALLBACK_ARGUMENT ]: action => action.customData,
+  [ CALLBACK_ERROR_ARGUMENT ]: action => action.customError,
+}).then( customData => console.log('Custom Data: ', customData) )
+.catch( customError => console.error('Custom Error: ', customError) );
+```
