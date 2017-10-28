@@ -1,6 +1,6 @@
 {
   "name": "redux-wait-for-action",
-  "version": "0.0.6",
+  "version": "0.0.7",
   "description": "Redux middleware to make store.dispatch() return a promise and wait for another action",
   "main": "lib/index.js",
   "scripts": {
@@ -18,9 +18,9 @@
     "eslint": "^3.12.2",
     "mocha": "^3.2.0"
   },
-  "repository" : {
-    "type" : "git",
-    "url" : "https://github.com/Chion82/redux-wait-for-action"
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Chion82/redux-wait-for-action"
   },
   "keywords": [
     "redux",
