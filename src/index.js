@@ -5,7 +5,14 @@ const CALLBACK_ERROR_ARGUMENT = Symbol('ERROR_CALLBACK_ARGUMENT');
 
 export { WAIT_FOR_ACTION, ERROR_ACTION, CALLBACK_ARGUMENT, CALLBACK_ERROR_ARGUMENT };
 
-const fsaCompliantArgumentCb = action => action.payload || action.data || {};
+const fsaCompliantArgumentCb = action => {
+  let res;
+
+  res = action.payload || action.data;
+  if (res === undefined) res = {};
+
+  return res;
+};
 const fsaCompliantErrorArgumentCb = action => action.error || action.err || new Error('action.error not specified.');
 
 export default function() {
