@@ -1,3 +1,5 @@
+const Symbol = require('es6-symbol');
+
 const WAIT_FOR_ACTION = Symbol('WAIT_FOR_ACTION');
 const ERROR_ACTION = Symbol('ERROR_ACTION');
 const CALLBACK_ARGUMENT = Symbol('CALLBACK_ARGUMENT');
